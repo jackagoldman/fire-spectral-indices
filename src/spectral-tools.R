@@ -49,4 +49,7 @@ filter_ls <- function(ls_img, lsVersion){
 
 
 # Merge Landsat Collections
-ls_col <- ee$ImageCollection(ls8$merge(ls7)$merge(ls5)$merge(ls4))
+merge_imageColl <- function(ls8, ls7, ls5, ls4){
+  
+  ls_col <- ee$ImageCollection(ls8$merge(ls7)$merge(ls5)$merge(ls4))
+}
