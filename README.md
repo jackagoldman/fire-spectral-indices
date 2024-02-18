@@ -1,6 +1,6 @@
 # fire-spectral-indices
 
-This repository consists of a pipeline to generate both burn severity and forest recovery imagery :artifitial_satellite: for wildfires :fire: using rgee.
+This repository consists of a pipeline to generate both burn severity and forest recovery imagery for wildfires :fire: using rgee.
 
 The code was modified from Parks et al. 2018, and therefore, any use of this pipeline should property acknowledge and reference the work of Parks et al. 2018.
 
