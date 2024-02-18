@@ -6,7 +6,7 @@
 
 # read in rgee
 library(rgee)
-library(tidyverse)
+library(tidyr)
 library(sf)
 
 # intialize ee
@@ -24,63 +24,11 @@ fires <- sf::st_read("")
 # convert sf objects to earth engine objects
 fires <- sf_as_ee()
 
-##############################################################
-########### create functions to make image collections #######
-#############################################################
-# landsat 8
 
-ls8_indices <- function(ls_img){
-  nbr <- ls_img$normalizedDifference(c('B5', 'B7'))$float()$rename("nbr")
-  qa <- ls_img$select('pixel_qa')
-  nbr$addBands(qa)$
-    select(0,1, 'nbr', 'pixel_qa')$
-    copyProperties(ls_img, list("system:time_start"))
-  
-  return(nbr)
-  
-}
 
-# landsat 7
-ls4_7_indices <- function(ls_img){
-  nbr <- ls_img$normalizedDifference(c('B4', 'B7'))$float()$rename("nbr")
-  qa <- ls_img$select('pixel_qa')
-  nbr$addBands(qa)$
-    select(0,1, 'nbr', 'pixel_qa')$
-    copyProperties(ls_img, list("system:time_start"))
-  
-  return(nbr)
-  
-}
 
-##################################################################
-############# mask landsat surface reflectance images ############
-##################################################################
-# create mask for clear pixels
-lscf_mask <- function(ls_img){
-  quality <- ls_img$select('pixel_qa')
-  clear <- quality$bitwiseAnd(8)$eq(0)$ #cloud shadow
-    And(quality$bitwiseAnd(32)$eq(0))$ # cloud
-    And(quality$bitwiseAnd(4)$eq(0))$ # water
-    And(quality$bitwiseAnd(16)$eq(0)) #snow
-  ls_img <- ls_img$updateMask(clear)$select(0)$
-    copyProperties(ls_img, list("system:time_start"))
-  return(ls_img)
-}
 
-#########################################################
-###### Map functions across Landsat Collections #########
-#########################################################
 
-ls8 <-  ls_8$map(ls8_indices)$map(lscf_mask)
-
-ls7 <-  ls_7$map(ls4_7_indices)$map(lscf_mask)
-
-ls5 <- ls_5$map(ls4_7_indices)$map(lscf_mask)
-
-ls4 <-  ls_4$map(ls4_7_indices)$map(lscf_mask) 
-
-################ Merge Landsat Collections
-ls_col <- ee$ImageCollection(ls8$merge(ls7)$merge(ls5)$merge(ls4))
 
 
 
