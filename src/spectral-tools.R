@@ -60,11 +60,11 @@ exportTable <-  (fires, Path){
   
   
   Export.table.toDrive({
-    collection: recoMetrics,
-    description: taskName,
-    folder: tablesFolder,
-    fileFormat:  'CSV',
-    fileNamePrefix : fileName
+    collection= recoMetrics
+    description= taskName,
+    folder= tablesFolder,
+    fileFormat=  'CSV',
+    fileNamePrefix = fileName
   })
   
 }
