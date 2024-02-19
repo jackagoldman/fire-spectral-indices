@@ -197,17 +197,6 @@ nbr_sev_indices <-  function(ft){
 metrics <-  fires$map(nbr_sev_indices)
 
 
-###################################
-######## export as csv ############
-###################################
-
-Export.table.toDrive({
-  collection: recoMetrics,
-  description: taskName,
-  folder: tablesFolder,
-  fileFormat:  'CSV',
-  fileNamePrefix : fileName
-}); 
 
 
   
