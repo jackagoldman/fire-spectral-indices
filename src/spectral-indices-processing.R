@@ -12,26 +12,6 @@ library(sf)
 # intialize ee
 ee$Initialize()
 
-# read in landsat image collections
-ls_8 <- ee$ImageCollection('LANDSAT/LC08/C01/T1_SR') #landsat 8
-ls_7 <-  ee$ImageCollection('LANDSAT/LE07/C01/T1_SR') # 7
-ls_5 <-  ee$ImageCollection('LANDSAT/LT05/C01/T1_SR') # 5
-ls_4 <-  ee$ImageCollection('LANDSAT/LT04/C01/T1_SR') # 4
-
-## read in fires
-fires <- sf::st_read("")
-
-# convert sf objects to earth engine objects
-fires <- sf_as_ee()
-
-
-
-
-
-
-
-
-
 ###################################################
 ############# get pre fire NBR indices ############
 ###################################################
