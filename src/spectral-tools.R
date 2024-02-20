@@ -1,15 +1,20 @@
 
 
-
 # read in data
-readFile <-  function(path2file){
+readFile <- function(path2file){
   file <- ee$ImageCollection(path2file) 
   return(file)
 }
 
 
-
-
+# read in fires and convert to ee object
+## read in fires
+readFire <- function(firePath){
+  fires <- sf::st_read(firePath)
+  # convert sf objects to earth engine objects
+  fires <- rgee::sf_as_ee(fires)
+  return(fires)
+}
 
 
 
@@ -53,7 +58,7 @@ lscf_mask <- function(ls_img){
 
 # function to map  around indices to get images as NBR and apply mask
 filter_ls <- function(ls_img, lsVersion){
-  if(lsVerion == "8"){
+  if(lsVersion == 8){
     ls <- ls_img$map(ls8_indices)$map(lscf_mask)
   }else{
     ls <- ls_img$map(ls4_7_indices)$map(lscf_mask)
