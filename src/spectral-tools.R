@@ -1,4 +1,18 @@
 
+
+
+# read in data
+readFile <-  function(path2file){
+  file <- ee$ImageCollection(path2file) 
+  return(file)
+}
+
+
+
+
+
+
+
 # Create landsat 8 image collection for NBR
 ls8_indices <- function(ls_img){
   nbr <- ls_img$normalizedDifference(c('B5', 'B7'))$float()$rename("nbr")
@@ -56,15 +70,15 @@ merge_imageColl <- function(ls8, ls7, ls5, ls4){
 
 # export top drive
 
-exportTable <-  (fires, Path){
+exportTable <-  function(fires, Path){
   
   
-  Export.table.toDrive({
+  Export.table.toDrive(
     collection= recoMetrics
     description= taskName,
     folder= tablesFolder,
     fileFormat=  'CSV',
     fileNamePrefix = fileName
-  })
+  )
   
 }
