@@ -1,29 +1,19 @@
-############ NBR SCRIPT ##################
-# This script calculates prefire and postfire NBR as well as RBR and dNBR
-# uses rgee 
-#
 
 
-# read in rgee
-library(rgee)
-library(tidyr)
-library(sf)
 
-# intialize ee
-ee$Initialize()
-
-###################################################
-############# get pre fire NBR indices ############
-###################################################
-# first we must send the start and end day
-
-startday <- 
+#' Get nbr for pre and pod fire for 1 year and rbr
+#'
+#' @param ft 
+#'
+#' @return
+#' @export
+#'
+#' @examples
+indices_f <- function(fires, ls_col){
   
-  endday <- 
   
-  band_list <- list("preNBR", "postNBR", "rbr", "dnbr")
-
-indices <- ee$ImageCollection(fires$map(function(ft){
+  indices <- ee$ImageCollection(fires$map(function(ft){
+  
   ## use 'Fire_ID' as unique identifier
   fName <- ft$get("Fire_ID")
   fireBounds <- ft$geometry()$bounds()
@@ -38,14 +28,14 @@ indices <- ee$ImageCollection(fires$map(function(ft){
     filterDate(preFireYear, fireYear)$
     filter(ee$Filter$dayOfYear(startday, endday))$
     mean()$
-    rename('preNBR')$
+    rename('preNBR')
     
     # create post-fire NBR as mean composite
     postFireIndices <- lsCol$filterBounds(fireBounds)$
     filterDate(postFireYear, fireYear$advance(2, 'year'))$
     filter(ee$Filter$dayOfYear(startday, endday))$
     mean()$
-    rename('postNBR')$
+    rename('postNBR')
     
     # create image with pre and post bands
     fire_indices <- preFireIndices$addBands(postFireIndices)
@@ -69,6 +59,8 @@ indices <- ee$ImageCollection(fires$map(function(ft){
   return(burn_indices2)
 }
 ))
+  return(indices)
+}
 
 
 #####################################################
@@ -174,7 +166,8 @@ nbr_sev_indices <-  function(ft){
 
 
 
-metrics <-  fires$map(nbr_sev_indices)
+
+
 
 
 
