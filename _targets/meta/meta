@@ -1,0 +1,24 @@
+name|type|data|command|depend|seed|path|time|size|bytes|format|repository|iteration|parent|children|seconds|warnings|error
+.Random.seed|object|c4509221e1a106fe|||||||||||||||
+band_list|object|ed5b188120bb663b|||||||||||||||
+endday|object|2c271ae4f26b7758|||||||||||||||
+exportTable|function|70d71ce61191b5d7|||||||||||||||
+filter_ls|function|6f7c1a7c4ab7346d|||||||||||||||
+fire|stem||809d47442a5433a3|3b6bdd1512b74025|1758353750||t19791.6447932697s||0|rds|local|vector|||0.338|package dplyr was built under R version 4.3.1. GDAL Error 1 PROJ proj_identify Cannot find proj.db. GDAL Error 1 PROJ proj_create_from_database Cannot find proj.db|The x CRS needs to be defined, use sfst_set_crs to set.
+firePath|object|ef5f74367c765b80|||||||||||||||
+getMetrics|function|4ab06a36c724bb34|||||||||||||||
+GG_DIR|object|928be9dba39089b7|||||||||||||||
+indices_f|function|4800ea2f37b9d2ba|||||||||||||||
+ls4|stem|e910edcfe271d348|7b7033dcd1577188|20a0de53b11a7c47|-1292620988||t19791.6447917692s|85f9d15331713ebb|203|rds|local|vector|||0.307|package dplyr was built under R version 4.3.1|
+ls4_7_indices|function|6a074bc057e1e55e|||||||||||||||
+ls4path|object|cbc35c6adeb1cb3c|||||||||||||||
+ls5path|object|1726a6573d16fc74|||||||||||||||
+ls7path|object|d9b4e4864341cd9b|||||||||||||||
+ls8_indices|function|7f9653ee78774ddd|||||||||||||||
+ls8path|object|8f61fd45c335c2d5|||||||||||||||
+lscf_mask|function|cb70e69eb3a93384|||||||||||||||
+merge_imageColl|function|2e6107486695b2c4|||||||||||||||
+nbr_sev_indices|function|68b8af3097061852|||||||||||||||
+readFile|function|6b447b5bf49872c9|||||||||||||||
+readFire|function|6409e48409f547e0|||||||||||||||
+startday|object|dd5db50a8149e5ce|||||||||||||||
