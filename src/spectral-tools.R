@@ -17,14 +17,16 @@ readFire <- function(firePath){
   return(fires)
 }
 
-#rename Bands
+#rename Bands (NOT WORKING)
 renameBands <- function(coll){
   bands <- list("SR_B5", "SR_B7", "QA_PIXEL")
-  imgColl <- coll$select(bands,c("B4", "B7", "pixel_qa"))
+  renameList <- list("B4", "B7", "pixel_qa")
+  imgColl <- coll$select(bands,renameList)
   
   return(imgColl) 
 }
 
+print(imgColl$filterDate(preFireYear, fireYear)$getInfo())
 # filter image collection by month
 filter_col_winter <- function(ls_img){
   ls_date <- ls_img$
@@ -34,9 +36,14 @@ filter_col_winter <- function(ls_img){
 }
 
 
-filter_col_date <- function(ls_img){
-  ls_date <- ls_img$
-    filterDate(preFireYear, fireYear)
+filter_col_date <- function(ls_img, pre){
+  if(pre == pre){
+    ls_date <- ls_img$
+      filterDate(preFireYear, fireYear)
+  }else {
+    ls_date <- ls_img$
+      filterDate(postFireYear, fireYearDec)
+  }
   
   return(ls_date)
 }
@@ -48,11 +55,21 @@ timeFrame <- function(data){
   preFire <- lubridate::ymd(preFire, truncated = 2L) 
   month(preFire) <- 12
   preFire <- preFire |> as.character() |> as.data.frame()
-  year <- lubridate::ymd(year, truncated = 2L)
-  month(year) <- 3
-  year <- year |> as.character() |> as.data.frame()
-  res <- cbind(preFire, year)
-  colnames(res) <- c("preFireYear", "fireYear")
+  fireYear <- lubridate::ymd(year, truncated = 2L)
+  month(fireYear) <- 3
+  fireYear <- fireYear |> as.character() |> as.data.frame()
+  postFire <- (year + 1)
+  postFire <- lubridate::ymd(postFire, truncated = 2L) 
+  month(postFire) <- 2
+  postFire <- postFire |> as.character() |> as.data.frame()
+  yearEnd <- year
+  yearEnd<- lubridate::ymd(yearEnd, truncated = 2L) 
+  month(yearEnd) <- 12
+  yearEnd <- yearEnd |> as.character() |> as.data.frame()
+  
+  postFire <- postFire |> as.character() |> as.data.frame()
+  res <- cbind(preFire, fireYear, yearEnd, postFire)
+  colnames(res) <- c("preFireYear", "fireYear", "fireYearDec", "postFireYear")
   
   
   return(res)
@@ -62,17 +79,17 @@ timeFrame <- function(data){
 
 createNBRcoll <- function(ls4, ls5, ls7, ls8){
   
-  ls8 <- renameBands(ls8)
+  #ls8 <- renameBands(ls8) (NOT WORKING, siwth normalized to SR)
   
   # make image collection for ls_8
   
-  ls8Nbr <- function(image){
+  ls8Nbr <- ee$ImageCollection(ls8$map(function(image){
     
-    nbr <- image$normalizedDifference(c("B4", "B7"))$float()$rename("nbr")
-    qa <- image$select("pixel_qa")
+    nbr <- image$normalizedDifference(c("SR_B5", "SR_B7"))$float()$rename("nbr")
+    qa <- image$select("QA_PIXEL")
     img <- nbr$addBands(qa)
     
-    quality <- img$select('pixel_qa')
+    quality <- img$select('QA_PIXEL')
     clear <- quality$bitwiseAnd(4)$eq(0)$ #cloud shadow
       And(quality$bitwiseAnd(3)$eq(0))$ # cloud
       And(quality$bitwiseAnd(7)$eq(0))$ # water
@@ -82,9 +99,11 @@ createNBRcoll <- function(ls4, ls5, ls7, ls8){
     
     return(img)
     
-  }
+  }))
   
-  ls8c <- ls8$map(ls8Nbr)
+ 
+  
+  
   
   ls_col47 <- ee$ImageCollection(ls7$merge(ls5)$merge(ls4))
 
@@ -109,7 +128,7 @@ createNBRcoll <- function(ls4, ls5, ls7, ls8){
     
   }))
   
-  colNBR <-ee$ImageCollection(ls8c$merge(ls47NBR))
+  colNBR <-ee$ImageCollection(ls8Nbr$merge(ls47NBR))
   
   return(colNBR)
 }

@@ -48,7 +48,7 @@ indices_f <- function(fires, ls_col){
   # calculate RBR  
   burn_indices2 <- burn_indices$expression(
     "b('dnbr') / (b('preNBR') + 1.001)")$
-    rename('rbr')$float()$addBands(burn_indices2)
+    rename('rbr')$float()$addBands(burn_indices)
   
   
   burn_indices2 = burn_indices2$select(band_list)
@@ -197,7 +197,7 @@ getWinterIndices <- function(data, colNBR){
   preFireYear <- timeFrame(data)$preFireYear
   fireYear <- timeFrame(data)$fireYear
   #filter col by months 12-2 (winter)
-  preLs <- filter_col_date(colNBR)
+  preLs <- filter_col_date(colNBR, "pre")
   preLs <- filter_col_winter(preLs) # 12-2
   
   # get mean composite over timeframe
@@ -207,6 +207,35 @@ getWinterIndices <- function(data, colNBR){
   
   
   ## get post fire start date and end date and filter the imagery
+  postFireYear <- timeFrame(data)$postFireYear
+  fireYearDec <- timeFrame(data)$fireYearDec
+  # creat postfire imagery
+  postLs <- filter_col_date(colNBR, "post")
+  postLs <- filter_col_winter(postLs)
+
+  # get mean composite over timeframe
+  postComp <- postLs$select('nbr')$
+    mean()$
+    rename("postNBR")
+  
+  #Add post and pre together
+  composite <- preComp$addBands(postComp)
+  
+  # calculate dNBR
+  burn_indices <- composite$expression(
+    "(b('preNBR') - b('postNBR')) * 1000")$
+    rename('dnbr')$float()$addBands(composite)
+  
+  # calculate RBR  
+  burn_indices2 <- burn_indices$expression(
+    "b('dnbr') / (b('preNBR') + 1.001)")$
+    rename('rbr')$float()$addBands(burn_indices)
+  
+ 
+  print(postComp$getInfo())
+  
+  
+  
   
 }
 
