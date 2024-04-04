@@ -58,6 +58,62 @@ timeFrame <- function(data){
   return(res)
 }
 
+# ls col
+
+createNBRcoll <- function(ls4, ls5, ls7, ls8){
+  
+  ls8 <- renameBands(ls8)
+  
+  # make image collection for ls_8
+  
+  ls8Nbr <- function(image){
+    
+    nbr <- image$normalizedDifference(c("B4", "B7"))$float()$rename("nbr")
+    qa <- image$select("pixel_qa")
+    img <- nbr$addBands(qa)
+    
+    quality <- img$select('pixel_qa')
+    clear <- quality$bitwiseAnd(4)$eq(0)$ #cloud shadow
+      And(quality$bitwiseAnd(3)$eq(0))$ # cloud
+      And(quality$bitwiseAnd(7)$eq(0))$ # water
+      And(quality$bitwiseAnd(5)$eq(0)) #snow
+    img <- img$updateMask(clear)$select(0)
+    
+    
+    return(img)
+    
+  }
+  
+  ls8c <- ls8$map(ls8Nbr)
+  
+  ls_col47 <- ee$ImageCollection(ls7$merge(ls5)$merge(ls4))
+
+  
+  
+  # make image collection
+  ls47NBR <- ee$ImageCollection(ls_col47$map(function(img){
+    
+    nbr <- img$normalizedDifference(c("B4", "B7"))$float()$rename("nbr")
+    qa <- img$select("pixel_qa")
+    img <- nbr$addBands(qa)
+    
+    quality <- img$select('pixel_qa')
+    clear <- quality$bitwiseAnd(8)$eq(0)$ #cloud shadow
+      And(quality$bitwiseAnd(32)$eq(0))$ # cloud
+      And(quality$bitwiseAnd(4)$eq(0))$ # water
+      And(quality$bitwiseAnd(16)$eq(0)) #snow
+    img <- img$updateMask(clear)$select(0)
+    
+    
+    return(img)
+    
+  }))
+  
+  colNBR <-ee$ImageCollection(ls8c$merge(ls47NBR))
+  
+  return(colNBR)
+}
+
 
 # Create landsat 8 image collection for NBR
 ls8_indices <- function(ls_img){

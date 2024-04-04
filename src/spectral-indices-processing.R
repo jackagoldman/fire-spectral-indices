@@ -177,7 +177,7 @@ nbr_sev_indices <-  function(ft){
 #' @export
 #'
 #' @examples
-getWinterIndices <- function(data, ls_col){
+getWinterIndices <- function(data, colNBR){
   
   require(sf)
   require(rgee)
@@ -192,33 +192,21 @@ getWinterIndices <- function(data, ls_col){
   #get geometry
   geom <- sf_as_ee(data$geometry)
   
-  
-  # make image collection
-  getNBR <- ee$ImageCollection(ls_col$map(function(image){
-    
-    nbr <- image$normalizedDifference(c("B4", "B7"))$float()$rename("nbr")
-    qa <- ls_img$select("pixel_qa")
-    img <- nbr$addBands(qa)$
-      copyProperties(ls_img, list("system:time_start"))
-    
-    
-    #qa bitmask here issue with different bitmask values. what should i do?
-    
-    return(img)
-    
-  }))
-  
-  
+
   #get start date and end date the filter imagery for prefire
   preFireYear <- timeFrame(data)$preFireYear
   fireYear <- timeFrame(data)$fireYear
   #filter col by months 12-2 (winter)
-  preLs <- filter_col_date(getNBR)
-  preLs <- filter_col_winter(preLs)
+  preLs <- filter_col_date(colNBR)
+  preLs <- filter_col_winter(preLs) # 12-2
+  
+  # get mean composite over timeframe
+  preComp <- preLs$select('nbr')$
+    mean()$
+    rename("preNBR")
   
   
-  
-  
+  ## get post fire start date and end date and filter the imagery
   
 }
 
